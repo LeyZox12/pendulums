@@ -24,6 +24,7 @@
 #include <string>
 #include <vector>
 #include "json.hpp"
+#include <algorithm>
 
 using namespace sf;
 using namespace std;
@@ -53,6 +54,7 @@ float cameraZoom = 1.f;
 int maxFPS = 60;
 bool previewMode = false;
 int previewFrames = 60;
+float minZoom = 0.1f;
 const char* fileName = "res/default.json";
 View camera;
 
@@ -346,7 +348,11 @@ void renderUI()
     if(ImGui::SliderInt("TargetIndex:", &cameraTarget, -1, pendulums.size()-1))
         if(cameraTarget == -1)
             camera.setCenter((Vector2f)window.getSize()/2.f);
-    if(ImGui::DragFloat("CameraZoom", &cameraZoom, 0.1, 0.1))camera.setSize((Vector2f)window.getSize() * 1.f/cameraZoom);
+    if(ImGui::DragFloat("CameraZoom", &cameraZoom, 0.1, 0.1))
+    {
+        cameraZoom = max(0.1f, cameraZoom);    
+        camera.setSize((Vector2f)window.getSize() * 1.f/cameraZoom);
+    }
     ImGui::Checkbox("Preview Mode", &previewMode);
     if(previewMode)
         ImGui::InputInt("PreviewFrameCount", &previewFrames);
